@@ -1,0 +1,198 @@
+from tkinter import *
+import mysql.connector
+import datetime
+import openpyxl
+
+
+root = Tk()
+root.title("Database System (Nondisabled)")
+frame = Frame(root, width=350, height=250)
+frame.grid(row=7, column=7)
+button1 = Button(frame, text="button1")
+
+genders=['M','F']
+sexvar1= StringVar(root)
+sexvar1.set('F')
+sexlist1 = OptionMenu(frame,sexvar1,'F','M')
+
+sexvar2= StringVar(root)
+sexvar2.set('F')
+sexlist2 = OptionMenu(frame,sexvar2,'F','M')
+
+helps=['widow pension','economic help','death certificate','bank account','pan card', 'adhar card', 'laldly form', 'sukanya yojna',
+'mla attested','old age pension','income certificate','other']
+reqvar1= StringVar(root)
+reqvar1.set('widow pension')
+reqlist1 = OptionMenu(frame,reqvar1,'widow pension','economic help','death certificate','bank account','pan card', 'adhar card',
+ 'laldly form', 'sukanya yojna','mla attested','old age pension','income certificate','other')
+
+reqvar2= StringVar(root)
+reqvar2.set('widow pension')
+reqlist2 = OptionMenu(frame,reqvar2,'widow pension','economic help','death certificate','bank account','pan card', 'adhar card',
+ 'laldly form', 'sukanya yojna','mla attested','old age pension','income certificate','other')
+
+
+namelabel= Label(frame, text="Name",width=10)
+agelabel = Label(frame, text="Age")
+sexlabel = Label(frame, text="Sex")
+addlabel = Label(frame, text="Address")
+reqlabel = Label(frame, text="Requirement")
+otherlabel = Label(frame,text="Other")
+
+nameentry= Entry(frame)
+ageentry = Entry(frame)
+#sexentry = Entry(frame)
+addentry = Entry(frame)
+#reqentry = Entry(frame)
+otherentry =Entry(frame)
+
+
+namelabel.grid(row=0,column=0,padx=30,pady=10)
+agelabel.grid(row=0,column=1,padx=30,pady=10)
+sexlabel.grid(row=0,column=2,padx=30,pady=10)  
+addlabel.grid(row=0,column=3,padx=30,pady=10)
+reqlabel.grid(row=0,column=4,padx=30,pady=10)
+otherlabel.grid(row=0,column=5,padx=30,pady=10)
+
+nameentry.grid(row=1,column=0,padx=30,pady=10)
+ageentry.grid(row=1,column=1,padx=30,pady=10)
+#sexentry.grid(row=1,column=2,padx=30)  
+sexlist1.grid(row=1,column=2,padx=30) 
+addentry.grid(row=1,column=3,padx=30)
+#reqentry.grid(row=1,column=4,padx=30)
+reqlist1.grid(row=1,column=4,padx=30)
+otherentry.grid(row=1,column=5,padx=30)
+
+
+namelabel2= Label(frame, text="Name",width=10)
+agelabel2 = Label(frame, text="Age")
+sexlabel2 = Label(frame, text="Sex")
+addlabel2 = Label(frame, text="Address")
+reqlabel2 = Label(frame, text="Requirement")
+otherlabel2 = Label(frame,text="Other")
+
+nameentry2= Entry(frame)
+ageentry2 = Entry(frame)
+#sexentry2 = Entry(frame)
+addentry2 = Entry(frame)
+#reqentry2 = Entry(frame)
+otherentry2 =Entry(frame)
+
+
+
+namelabel2.grid(row=2,column=0,padx=30,pady=10) 
+agelabel2.grid(row=2,column=1,padx=30,pady=10)
+sexlabel2.grid(row=2,column=2,padx=30,pady=10)  
+addlabel2.grid(row=2,column=3,padx=30)
+reqlabel2.grid(row=2,column=4,padx=30)
+otherlabel2.grid(row=2,column=5,padx=30)
+
+
+nameentry2.grid(row=3,column=0,padx=30,pady=10)
+ageentry2.grid(row=3,column=1,padx=30,pady=10)
+sexlist2.grid(row=3,column=2,padx=30)   
+addentry2.grid(row=3,column=3,padx=30)
+reqlist2.grid(row=3,column=4,padx=30)
+otherentry2.grid(row=3,column=5,padx=30)
+
+
+anslabel = Label(frame)
+anslabel.grid(row=5,column=0,columnspan=8)
+
+
+mydb=mysql.connector.connect(host="localhost",user="surya",passwd="Surya@1107")
+mycursor=mydb.cursor()
+mycursor.execute("use gmr")
+date=datetime.date.today()
+
+
+def applied():
+	name = nameentry.get()
+	age = ageentry.get()
+	sex = sexvar1.get()
+	add = addentry.get()
+	req = reqvar1.get()
+	if(req=='other'):
+		req=otherentry.get()
+	nameentry.delete(0,END)
+	ageentry.delete(0,END)
+	#sexentry.delete(0,END)
+	addentry.delete(0,END)
+	#reqentry.delete(0,END)
+	otherentry.delete(0,END)
+	mycursor.execute("insert into nondisabled(date,name,age,sex,address,req,status)values('{}','{}',{},'{}','{}','{}','a');".format(date,name,age,sex,add,req))
+	mydb.commit()
+	wk = openpyxl.load_workbook("D:\\Programming\\codes\\Book1.xlsx")
+	sh = wk["Sheet1"]
+	row = sh.max_row+1
+	sh.cell(row,1).value=name
+	sh.cell(row,2).value=age
+	sh.cell(row,3).value=sex 
+	sh.cell(row,4).value=add 
+	sh.cell(row,5).value=req 
+	sh.cell(row,6).value=str(date)
+	sh.cell(row,7).value="applied"
+	wk.save("D:\\Programming\\codes\\Book1.xlsx")
+
+def recieved():
+	name = nameentry2.get()
+	age = ageentry2.get()
+	sex = sexvar2.get()
+	add = addentry2.get()
+	req = reqvar2.get()
+	if(req=='other'):
+		req=otherentry2.get()
+	nameentry2.delete(0,END)
+	ageentry2.delete(0,END)
+	#sexentry.delete(0,END)
+	addentry2.delete(0,END)
+	#reqentry2.delete(0,END)
+	otherentry2.delete(0,END)
+	mycursor.execute("update nondisabled set status='r' where name = '{}' and address='{}' and req='{}';".format(name,add,req))
+	mydb.commit()
+	wk = openpyxl.load_workbook("D:\\Programming\\codes\\Book1.xlsx")
+	sh = wk["Sheet1"]
+	row = sh.max_row+1
+	sh.cell(row,1).value=name
+	sh.cell(row,2).value=age
+	sh.cell(row,3).value=sex 
+	sh.cell(row,4).value=add 
+	sh.cell(row,5).value=req 
+	sh.cell(row,6).value=str(date)
+	sh.cell(row,7).value="recieved"
+	wk.save("D:\\Programming\\codes\\Book1.xlsx")
+
+
+
+def showpend():
+	mycursor.execute("select * from nondisabled where status='a';")
+	result=""
+	for i in mycursor:
+		temp=""
+		for j in i:
+			temp+=str(j).ljust(24," ")
+		result+=temp+'\n'
+	anslabel.config(text=result,width=100,justify=LEFT)
+
+def showrec():
+	mycursor.execute("select * from nondisabled where status='r';")
+	result=""
+	for i in mycursor:
+		temp=""
+		for j in i:
+			temp+=str(j).ljust(25," ")
+		result+=temp+'\n'
+	anslabel.config(text=result,width=100,justify=LEFT)
+
+applybutton = Button(frame,text="Applied",command=applied) 
+recievebutton = Button(frame,text="Recieve",command=recieved)
+showpending = Button(frame,text="Show pending",command=showpend)
+showrecieved = Button(frame, text= "Show recieved",command=showrec)
+
+
+applybutton.grid(row=1,column=6,padx=30,pady=10) 
+recievebutton.grid(row=3, column=6, padx=30)
+showpending.grid(row=4,column=0,columnspan=2,pady=15)
+showrecieved.grid(row=4,column=3, columnspan=2)
+
+root.mainloop()
